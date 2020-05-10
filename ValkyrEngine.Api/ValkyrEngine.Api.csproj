@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>ValkyrEngine</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="MessageSystem\" />
+    <PackageReference Include="Veldrid.Sdl2" Version="4.7.0" />
   </ItemGroup>
 
 </Project>
