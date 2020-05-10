@@ -1,6 +1,9 @@
 ﻿namespace ValkyrEngine.Input
 {
-  public interface IInputSystem
+  /// <summary>
+  /// Specifies the functionalities of the input system.
+  /// </summary>
+  public interface IInputSystem : ISystem<InputSettings>
   {
   }
 }

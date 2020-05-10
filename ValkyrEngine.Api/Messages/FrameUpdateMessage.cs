@@ -1,10 +1,12 @@
-﻿using ValkyrEngine.MessageSystem;
+﻿using System.Diagnostics.CodeAnalysis;
+using ValkyrEngine.MessageSystem;
 
 namespace ValkyrEngine.Messages
 {
   /// <summary>
   /// Represents an update message that contains frame information when this message wars sent. 
   /// </summary>
+  [ExcludeFromCodeCoverage]
   public struct FrameUpdateMessage : IMessage
   {
     /// <summary>

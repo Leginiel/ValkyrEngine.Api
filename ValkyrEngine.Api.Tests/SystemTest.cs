@@ -8,6 +8,7 @@ namespace ValkyrEngine.Api.Test
   public class SystemTest
   {
     [Fact]
+    [Trait("Category", "Unit")]
     public void TestSetup_ValidSettings_SuccessfulSetup()
     {
       // Arrange
@@ -31,6 +32,7 @@ namespace ValkyrEngine.Api.Test
       systemMock.VerifyAll();
     }
     [Fact]
+    [Trait("Category", "Unit")]
     public void TestSetup_NoInput_SuccessfulCleanUp()
     {
       // Arrange
