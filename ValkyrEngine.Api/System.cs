@@ -19,15 +19,13 @@ namespace ValkyrEngine
       Setup();
       SetupMessageHandler();
     }
-    public void Dispose()
+    public virtual void CleanUp()
     {
       CleanUpMessageHandler();
-      CleanUp();
     }
 
     protected abstract void Setup();
     protected abstract void SetupMessageHandler();
-    protected abstract void CleanUp();
     protected abstract void CleanUpMessageHandler();
   }
 }
