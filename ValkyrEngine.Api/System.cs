@@ -8,7 +8,7 @@ namespace ValkyrEngine
     protected Settings SystemSettings { get; private set; }
     protected IMessageSystem MessageSystem { get; }
 
-    public System(IMessageSystem messageSystem)
+    protected System(IMessageSystem messageSystem)
     {
       MessageSystem = messageSystem;
     }
@@ -19,7 +19,7 @@ namespace ValkyrEngine
       Setup();
       SetupMessageHandler();
     }
-    public virtual void Dispose()
+    public void Dispose()
     {
       CleanUpMessageHandler();
       CleanUp();

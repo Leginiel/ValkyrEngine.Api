@@ -2,7 +2,7 @@
 
 namespace ValkyrEngine
 {
-  public interface ISystem<Settings> : IDisposable
+  public interface ISystem<in Settings> : IDisposable
     where Settings : struct
   {
     void Setup(Settings settings);
