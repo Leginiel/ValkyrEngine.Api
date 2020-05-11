@@ -11,11 +11,11 @@ namespace ValkyrEngine.Input
     /// Determines if the input system listenes to mouse input.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public bool UseMouseInput { get; }
+    public bool UseMouseInput { get; set; }
     /// <summary>
     /// Determines if the input system listenes to keyboard input.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public bool UseKeyboardInput { get; }
+    public bool UseKeyboardInput { get; set; }
   }
 }
