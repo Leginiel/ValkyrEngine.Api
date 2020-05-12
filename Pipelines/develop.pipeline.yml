@@ -44,6 +44,8 @@ steps:
     SonarCloud: SonarCloud
     organization: 'leginiel-github'
     projectKey: 'Leginiel_ValkyrEngine_Api'
+    extraProperties: |
+      sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\ValkyrEngine.Api.Tests\coverage.opencover.xml
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build'
@@ -53,8 +55,26 @@ steps:
     projects: ValkyrEngine.Api.sln
     arguments: '-c=$(buildConfiguration)'
 
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  env:
+    MSBUILDSINGLELOADCONTEXT: 1
+  inputs:
+    command: test
+    projects: '**/ValkyrEngine.Api.Tests.csproj'
+    arguments: ' --logger trx /p:Include="[ValkyrEngine.Api*]*" -v:n /p:CollectCoverage=true "/p:CoverletOutputFormat=\"opencover,cobertura\""'
+
+- task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@1
+  displayName: ReportGenerator
+  inputs:
+    reports: '$(Build.SourcesDirectory)\ValkyrEngine.Api.Tests\coverage.cobertura.xml'
+    targetdir: '$(Build.SourcesDirectory)\'
+    reporttypes: 'HtmlInline_AzurePipelines;HtmlChart'
+
 - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
+  inputs:
+    extraProperties: sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\ValkyrEngine.Api.Tests\coverage.opencover.xml
 
 - task: NuGetCommand@2
   displayName: 'nuget pack ValkyrEngine.Api.csproj'
@@ -72,6 +92,7 @@ steps:
     Contents: 'Utilities/docpal.exe'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
+   
 #- task: CopyFiles@2
 #  displayName: 'Copy UpdateDocumentation.ps1 to: $(Build.ArtifactStagingDirectory)'
 #  inputs:
@@ -95,6 +116,13 @@ steps:
 
 - task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
   displayName: 'Publish Quality Gate Result'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage from $(Build.SourcesDirectory)\ValkyrEngine.Api.Tests\coverage.cobertura.xml'
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(Build.SourcesDirectory)\ValkyrEngine.Api.Tests\coverage.cobertura.xml'
+
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: ValkyrEngine.Api'
