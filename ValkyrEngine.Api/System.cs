@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ValkyrEngine.MessageSystem;
 
 namespace ValkyrEngine
@@ -10,16 +12,23 @@ namespace ValkyrEngine
   public abstract class System<Settings> : ISystem<Settings>
     where Settings : struct
   {
+    private List<ISubSystem> subsystems;
     /// <summary>
     /// Settings, that are used to configure the system.
     /// </summary>
-    [ExcludeFromCodeCoverage]
     protected Settings SystemSettings { get; private set; }
     /// <summary>
     /// The underlying message system, to allow communication to other systems.
     /// </summary>
-    [ExcludeFromCodeCoverage]
     protected IMessageSystem MessageSystem { get; }
+    /// <inheritdoc/>
+    public IReadOnlyList<ISubSystem> SubSystems
+    {
+      get => subsystems;
+      internal set => subsystems = value.ToList();
+    }
+    /// <inheritdoc/>
+    public ISubSystem ActiveSubSystem { get; internal set; }
 
     /// <summary>
     /// Creates a new instance of the <see cref="System"/>-object.
@@ -34,6 +43,7 @@ namespace ValkyrEngine
     {
       SystemSettings = settings;
       Setup();
+      subsystems = SetupSubSystems().ToList();
       SetupMessageHandler();
     }
     /// <inheritdoc/>
@@ -41,10 +51,29 @@ namespace ValkyrEngine
     {
       CleanUpMessageHandler();
     }
+
+    /// <inheritdoc/>
+    public void ActivateSubSystem(ISubSystem subsystem)
+    {
+      if (subsystem == null)
+        throw new ArgumentNullException(nameof(subsystem));
+
+      if (!subsystems.Contains(subsystem))
+        throw new SubSystemActivationException(subsystem, "System is not registered");
+      if (ActiveSubSystem != subsystem)
+      {
+        ActiveSubSystem = subsystem;
+        SubSystemChanged();
+      }
+    }
     /// <summary>
     /// Performs additional setup routines.
     /// </summary>
     protected abstract void Setup();
+    /// <summary>
+    /// Initializes all avaialble Subsystems..
+    /// </summary>
+    protected abstract IEnumerable<ISubSystem> SetupSubSystems();
     /// <summary>
     /// Initializes all used message handler in the message system.
     /// </summary>
@@ -53,5 +82,9 @@ namespace ValkyrEngine
     /// Releases all used message handler in the message system.
     /// </summary>
     protected abstract void CleanUpMessageHandler();
+    /// <summary>
+    /// Performs all actions, that are neccessary when an subsystem changes.
+    /// </summary>
+    protected abstract void SubSystemChanged();
   }
 }
